@@ -12,29 +12,18 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * An abstract base reactive verticle that provides several helper methods for RESTful API.
- *
- * @author <a href="http://www.sczyh30.com">Eric Zhao</a>
- */
-public abstract class RestfulApiVerticle extends AbstractVerticle {
 
-  private static final Logger logger = LoggerFactory.getLogger(RestfulApiVerticle.class);
+public abstract class BaseVerticle extends AbstractVerticle {
+  private static final Logger logger = LoggerFactory.getLogger(BaseVerticle.class);
 
   /**
    * Create an HTTP server for the REST service.
-   *
    * @param router router instance
    * @param host   server host
    * @param port   server port
    * @return asynchronous result
    */
   protected Future createHttpServer(Router router, String host, int port) {
-//    return vertx.createHttpServer()
-//      .requestHandler(router::accept)
-//      .rxListen(port, host)
-//      .toCompletable();
-
     return vertx.createHttpServer()
       .requestHandler(router)
       .listen(port, host)

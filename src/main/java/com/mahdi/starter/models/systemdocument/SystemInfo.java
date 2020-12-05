@@ -2,11 +2,14 @@ package com.mahdi.starter.models.systemdocument;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mahdi.starter.common.TodoConverter;
+import com.mahdi.starter.models.AbstractAuditingEntity;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Created by mahdihp
@@ -19,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @DataObject(generateConverter = true)
-public class SystemInfo {
+public class SystemInfo extends AbstractAuditingEntity implements Serializable {
 
   public static final String KEY_ID = "id";
   public static final String KEY_SYSTEMNAME = "systemName";

@@ -3,6 +3,8 @@ package com.mahdi.starter.common;
 import com.mahdi.starter.models.systemdocument.SystemInfo;
 import io.vertx.core.json.JsonObject;
 
+import java.lang.reflect.Field;
+
 /**
  * Converter for {@link SystemInfo}.
  * <p>
@@ -17,6 +19,7 @@ public class TodoConverter {
     if (json.getValue("systemName") instanceof String) {
       obj.setSystemName((String) json.getValue("systemName"));
     }
+
   }
 
   public static void toJson(SystemInfo obj, JsonObject json) {

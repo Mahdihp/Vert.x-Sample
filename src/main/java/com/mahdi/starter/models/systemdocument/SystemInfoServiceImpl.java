@@ -5,9 +5,7 @@ import com.mahdi.starter.common.UtilData;
 import com.mahdi.starter.models.BaseService;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -15,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -39,9 +39,10 @@ public class SystemInfoServiceImpl implements BaseService<SystemInfoServiceImpl,
 
   @Override
   public Future initializeService() {
-    return this.mongoClient.getCollections().onComplete(new Handler<AsyncResult<List<String>>>() {
-      @Override
-      public void handle(AsyncResult<List<String>> listAsyncResult) {
+    logger.info("initializeService...");
+    return this.mongoClient.getCollections().onComplete(listAsyncResult -> {
+      if (listAsyncResult.succeeded()) {
+        logger.info("Connected To MongoDb...");
         logger.info("Count Collections: " + listAsyncResult.result().size());
         for (String listCollection : Constants.getListCollections()) {
           if (UtilData.findCollections(listCollection, listAsyncResult.result()) == false) {
@@ -49,6 +50,8 @@ public class SystemInfoServiceImpl implements BaseService<SystemInfoServiceImpl,
             logger.info("Collection Created: " + listCollection);
           }
         }
+      } else {
+        logger.info(listAsyncResult.cause().getMessage());
       }
     });
   }
@@ -56,7 +59,14 @@ public class SystemInfoServiceImpl implements BaseService<SystemInfoServiceImpl,
   @Override
   public Future<SystemInfo> insert(SystemInfo systemInfo) {
     JsonObject document = new JsonObject()
-      .put(SystemInfo.KEY_SYSTEMNAME, systemInfo.getSystemName());
+      .put(SystemInfo.KEY_SYSTEMNAME, systemInfo.getSystemName())
+      .put("createdDate", systemInfo.getCreatedDate());
+    document.forEach(new Consumer<Map.Entry<String, Object>>() {
+      @Override
+      public void accept(Map.Entry<String, Object> stringObjectEntry) {
+        logger.info(stringObjectEntry.getKey());
+      }
+    });
     return this.mongoClient.insert(Constants.KEY_SYSTEMINFO, document)
       .map(s -> {
         systemInfo.setId(s);

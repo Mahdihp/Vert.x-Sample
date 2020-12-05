@@ -4,6 +4,7 @@ import com.mahdi.starter.models.systemdocument.SystemInfoController;
 import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * http://gitlab.com/mahdihp
  */
 
-public class MainAppVerticle extends RestfulApiVerticle {
+public class MainAppVerticle extends BaseVerticle {
 
   private static final String HOST = "0.0.0.0";
   private static final int PORT = 8000;
@@ -32,9 +33,7 @@ public class MainAppVerticle extends RestfulApiVerticle {
     super.start(startPromise);
 
     router = Router.router(vertx);
-//     Enable HTTP Body parse.
-//    router.route().handler(BodyHandler.create());
-    // Enable CORS.
+    router.route().handler(BodyHandler.create());
     enableCorsSupport(router);
 
     String host = config().getString("http.address", HOST);
@@ -47,6 +46,8 @@ public class MainAppVerticle extends RestfulApiVerticle {
         createHttpServer(router, host, port);
       }
     });
+
+
   }
 
   private Future initializeServices() {
@@ -66,7 +67,9 @@ public class MainAppVerticle extends RestfulApiVerticle {
   }
 
   private void initRouter() {
+    router.get("/").handler(systemInfoController::ping);
     router.get("/ping").handler(systemInfoController::ping);
+    router.get("/insert").handler(systemInfoController::insert);
 
   }
 

@@ -28,21 +28,21 @@ public class SystemInfoController {
   public SystemInfoController(Vertx vertx, JsonObject config) {
     this.vertx = vertx;
     this.config = config;
-    systemInfoService = new SystemInfoServiceImpl(vertx, config);
   }
 
   public void ping(RoutingContext ctx) {
-    ResponseBody.sendResponse(ctx, "ping: " + LocalDateTime.now());
+    ResponseBody.sendResponse(ctx, "<h1> " + LocalDateTime.now()+"</h1>");
   }
 
   public void insert(RoutingContext ctx) {
-    JsonObject rawEntity = ctx.getBodyAsJson();
+//    JsonObject rawEntity = ctx.getBodyAsJson().;
+    JsonObject rawEntity = new JsonObject().put(SystemInfo.KEY_SYSTEMNAME,"Wowo");
     final SystemInfo todo = new SystemInfo(rawEntity);
     ResponseBody.sendResponse(ctx, systemInfoService.insert(todo));
   }
 
   public Future initializeService() {
-    logger.info("initializeService...");
+    systemInfoService = new SystemInfoServiceImpl(vertx, config);
     return systemInfoService.initializeService();
   }
 }
